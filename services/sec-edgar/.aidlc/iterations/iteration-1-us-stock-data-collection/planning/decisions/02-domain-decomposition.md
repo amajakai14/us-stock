@@ -26,7 +26,7 @@
 
 **Recommendation**: Option A because this is a single-user system where simplicity and rapid development are prioritized
 
-**Decision**:
+**Decision**: A
 **Additional Rationale** (Optional):
 **Additional Consequences** (Optional):
 
@@ -54,7 +54,7 @@
 
 **Recommendation**: Option A because Python excels at data processing and SEC API integration, which is core to this system
 
-**Decision**:
+**Decision**: A
 **Additional Rationale** (Optional):
 **Additional Consequences** (Optional):
 
@@ -82,9 +82,9 @@
 
 **Recommendation**: Option D because Streamlit allows rapid development with Python, leveraging backend skills for data-focused UI
 
-**Decision**:
+**Decision**: A
 **Additional Rationale** (Optional):
-**Additional Consequences** (Optional):
+**Additional Consequences** (Optional): You need to ask me to create a react project by I will give you the instruction step by step
 
 ---
 
@@ -110,9 +110,9 @@
 
 **Recommendation**: Option A because SQLite provides the right balance of functionality and simplicity for a single-user system
 
-**Decision**:
+**Decision**: B
 **Additional Rationale** (Optional):
-**Additional Consequences** (Optional):
+**Additional Consequences** (Optional): use docker-compose with volume
 
 ---
 
@@ -138,7 +138,7 @@
 
 **Recommendation**: Option A because an integrated scheduler provides the right simplicity for a single-user system while maintaining all functionality in one place
 
-**Decision**:
+**Decision**: A
 **Additional Rationale** (Optional):
 **Additional Consequences** (Optional):
 
@@ -148,11 +148,11 @@
 
 | Decision | Chosen Option | Rationale | Impact |
 |----------|---------------|-----------|--------|
-| [Architecture Pattern] | [Option] | [Brief rationale] | High/Medium/Low |
-| [Backend Technology] | [Option] | [Brief rationale] | High/Medium/Low |
-| [Frontend Technology] | [Option] | [Brief rationale] | High/Medium/Low |
-| [Database Choice] | [Option] | [Brief rationale] | High/Medium/Low |
-| [Scheduling Architecture] | [Option] | [Brief rationale] | High/Medium/Low |
+| Architecture Pattern | A) Monolith Architecture | Simple, single-user system with fast development | High |
+| Backend Technology | A) Python + FastAPI | Excellent for SEC data integration and processing | High |
+| Frontend Technology | A) React + TypeScript | User wants React with step-by-step instructions | High |
+| Database Choice | B) PostgreSQL with Docker-compose | Robust database with containerized volume persistence | Medium |
+| Scheduling Architecture | A) Integrated Scheduler | All-in-one solution for single-user simplicity | Medium |
 
 ## Next Steps
 Once all decisions are made:
