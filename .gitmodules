@@ -1,0 +1,3 @@
+[submodule "services/sec-edgar"]
+	path = services/sec-edgar
+	url = git@github.com:amajakai14/us-stock.git
