@@ -3,7 +3,7 @@ from typing import List, Optional, Tuple
 from uuid import UUID
 from datetime import datetime
 
-from app.infrastructure.database.repositories.stock_discovery import CompanyRepository
+from app.infrastructure.repositories.stock_discovery import CompanyRepository
 from app.shared.models.stock_discovery import (
     CompanyCreate, CompanyUpdate, CompanyResponse, CompanyListResponse,
     CompanySelectionRequest, CompanySelectionResponse, CompanySearchParams

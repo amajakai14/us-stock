@@ -4,7 +4,7 @@ from datetime import datetime
 from uuid import UUID
 
 class CompanyBase(BaseModel):
-    ticker_symbol: str = Field(..., min_length=1, max_length=10, regex="^[A-Z]+$")
+    ticker_symbol: str = Field(..., min_length=1, max_length=10, pattern="^[A-Z]+$")
     company_name: str = Field(..., min_length=1, max_length=255)
     exchange: str = Field(..., min_length=1, max_length=50)
     sector: Optional[str] = Field(None, max_length=100)
@@ -28,6 +28,7 @@ class CompanyResponse(CompanyBase):
 
     class Config:
         from_attributes = True
+        populate_by_name = True
 
 class CompanyListResponse(BaseModel):
     companies: List[CompanyResponse]

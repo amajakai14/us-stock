@@ -3,16 +3,16 @@
 Initialize sample data for development
 """
 
-import asyncio
-import sys
 import os
+import sys
 
 # Add the app directory to Python path
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-from sqlalchemy.ext.asyncio import AsyncSession
-from app.infrastructure.database import AsyncSessionLocal, init_db
-from app.infrastructure.database.repositories.stock_discovery import CompanyRepository
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from app.infrastructure.database import Base
+from app.domain.stock_discovery.models import Company
 
 # Sample companies data
 SAMPLE_COMPANIES = [
@@ -88,34 +88,55 @@ SAMPLE_COMPANIES = [
     }
 ]
 
-async def init_sample_data():
+def init_sample_data():
     """Initialize sample data"""
-    print("Initializing database...")
-    await init_db()
 
-    async with AsyncSessionLocal() as db:
-        company_repo = CompanyRepository(db)
+    # Use synchronous connection for simple script
+    DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:postgres@localhost:5432/us_stock_data")
 
+    # Replace asyncpg with psycopg2 for sync connection
+    if DATABASE_URL.startswith("postgresql+asyncpg"):
+        DATABASE_URL = DATABASE_URL.replace("postgresql+asyncpg", "postgresql+psycopg2")
+
+    print(f"Connecting to database: {DATABASE_URL}")
+
+    # Create synchronous engine
+    engine = create_engine(DATABASE_URL, echo=False)
+
+    # Create tables
+    print("Creating database tables...")
+    Base.metadata.create_all(engine)
+
+    # Create session
+    SessionLocal = sessionmaker(bind=engine)
+
+    with SessionLocal() as session:
         # Check if data already exists
-        existing_count = await company_repo.get_all(page=1, size=1)
-        if existing_count[1] > 0:
-            print("Sample data already exists. Skipping initialization.")
+        existing_count = session.query(Company).count()
+        if existing_count > 0:
+            print(f"Sample data already exists ({existing_count} companies). Skipping initialization.")
             return
 
         print("Creating sample companies...")
         for company_data in SAMPLE_COMPANIES:
             try:
                 # Check if company already exists
-                existing = await company_repo.get_by_ticker(company_data["ticker_symbol"])
+                existing = session.query(Company).filter(
+                    Company.ticker_symbol == company_data["ticker_symbol"]
+                ).first()
+
                 if not existing:
-                    await company_repo.create(company_data)
+                    company = Company(**company_data)
+                    session.add(company)
+                    session.commit()
                     print(f"Created: {company_data['ticker_symbol']} - {company_data['company_name']}")
                 else:
                     print(f"Skipped existing: {company_data['ticker_symbol']}")
             except Exception as e:
                 print(f"Error creating {company_data['ticker_symbol']}: {e}")
+                session.rollback()
 
         print("Sample data initialization completed!")
 
 if __name__ == "__main__":
-    asyncio.run(init_sample_data())
+    init_sample_data()

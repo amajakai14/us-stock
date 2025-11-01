@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from .routers import stock_discovery, data_collection, data_management
+from .router_modules import stock_discovery, data_collection, data_management
 
 api_router = APIRouter()
 
