@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: us-stock-postgres
+    environment:
+      POSTGRES_DB: us_stock_data
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init:/docker-entrypoint-initdb.d
+    networks:
+      - us-stock-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    container_name: us-stock-backend
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/us_stock_data
+      - API_KEY=dev-api-key-12345
+      - SEC_API_BASE_URL=https://www.sec.gov/Archives/edgar
+      - PYTHONPATH=/app
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+      - /app/__pycache__
+    depends_on:
+      - postgres
+    networks:
+      - us-stock-network
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: us-stock-frontend
+    environment:
+      - REACT_APP_API_BASE_URL=http://localhost:8000
+      - REACT_APP_API_KEY=dev-api-key-12345
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    networks:
+      - us-stock-network
+    command: npm start
+
+volumes:
+  postgres_data:
+
+networks:
+  us-stock-network:
+    driver: bridge
